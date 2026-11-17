@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f7ef">
+    <title>Recipe Box | Your Recipe Collection</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#8A9A7B">
+</head>
+<body>
+
+
+<div id="authPage" class="auth-page">
+    <div class="auth-box">
+       <div class="auth-logo">
+    <img src="logo.png" alt="Recipe Box Logo">
+</div>
+        <h1>Recipe Box</h1>
+        <p id="authSubtitle">Please login.</p>
+
+        <form id="authForm">
+
+    <input
+        type="text"
+        id="authFullName"
+        placeholder="Full Name"
+        autocomplete="name"
+        hidden
+    >
+
+    <input
+        type="email"
+        id="authEmail"
+        placeholder="Email Address"
+        autocomplete="email"
+        required
+    >
+
+    <input
+        type="password"
+        id="authPassword"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+    >
+
+    <input
+        type="password"
+        id="authConfirmPassword"
+        placeholder="Confirm Password"
+        autocomplete="new-password"
+        hidden
+    >
+
+    <button type="submit" id="authButton">
+        Login
+    </button>
+
+</form>
+
+        <p id="authMessage"></p>
+
+        <p class="auth-switch">
+            <span id="authSwitchText">Don't have an account?</span>
+            <button type="button" id="authSwitch">
+                Register
+            </button>
+        </p>
+    </div>
+</div>
+
+
+  
+
+<header class="header">
+    <a href="#" class="logo">
+        <img src="logo.png" alt="Recipe Box Logo">
+        Recipe Box
+    </a>
+
+    <div class="header-buttons">
+        <button class="add-button" id="addRecipeBtn">
+            + Add Recipe
+        </button>
+
+        <div class="profile-container">
+            <button type="button" class="profile-button" id="profileButton">
+                👤
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown" hidden>
+                <div class="profile-info">
+                    <strong id="profileName">User</strong>
+                    <small id="profileEmail">user@email.com</small>
+                </div>
+
+                <div class="profile-divider"></div>
+
+                <button type="button" id="logoutBtn" class="profile-logout">
+                    ↪ Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+    <main class="container">
+
+        <section class="welcome">
+    <p class="eyebrow">YOUR PERSONAL COOKBOOK</p>
+
+    <h1>Welcome, <span id="userName">User</span>! 👋</h1>
+
+    <h2>What would you like to cook today?</h2>
+
+    <p class="subtitle">
+        Discover delicious recipes and save your favorites.
+    </p>
+</section>
+
+<section class="search-section">
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search your favorite recipes..."
+    >
+</section>
+
+        <section class="categories">
+            <h2>Categories</h2>
+            <div class="category-list">
+                <button class="category active" data-category="All">All</button>
+                <button class="category" data-category="Breakfast">🍳 Breakfast</button>
+                <button class="category" data-category="Lunch">🍱 Lunch</button>
+                <button class="category" data-category="Dinner">🍝 Dinner</button>
+                <button class="category" data-category="Dessert">🍰 Dessert</button>
+            </div>
+        </section>
+
+        <section class="recipes-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">FIND YOUR NEXT FAVORITE</p>
+                    <h2 id="recipeHeading">Popular Recipes</h2>
+                </div>
+                <span id="recipeCount">6 recipes</span>
+            </div>
+
+            <div class="recipe-grid" id="recipeGrid"></div>
+
+            
+<section id="recipeDetailsPage" class="recipe-details-page" hidden>
+    <button type="button" id="backToRecipes" class="back-button">
+        ←
+    </button>
+
+    <div class="recipe-details-content">
+        <img id="detailsImage" src="" alt="Recipe Image">
+
+        <div class="recipe-details-info">
+            <p id="detailsCategory" class="eyebrow"></p>
+            <h1 id="detailsName"></h1>
+            <p id="detailsTime"></p>
+
+            <div class="details-section">
+                <h2>Ingredients</h2>
+                <div id="detailsIngredients"></div>
+            </div>
+
+            <div class="details-section">
+                <h2>Steps</h2>
+                <div id="detailsInstructions"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<div class="modal" id="recipeModal">
+    <div class="modal-content">
+        <button class="close-button" id="closeModal">✕</button>
+
+        <h2>Add New Recipe</h2>
+        <p>Share your favorite recipe!</p>
+
+        <form id="recipeForm">
+            <input type="text" id="recipeName"
+                placeholder="Recipe Name" required>
+
+            <select id="recipeCategory" required>
+                <option value="">Select Category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Dessert">Dessert</option>
+            </select>
+
+            <input type="text" id="recipeTime"
+                placeholder="Cooking Time (e.g. 30 minutes)" required>
+
+            <input type="url" id="recipeImage"
+                placeholder="Recipe Image URL">
+
+            <textarea id="recipeIngredients"
+                placeholder="Ingredients" required></textarea>
+
+            <textarea
+    id="recipeInstructions"
+    placeholder="Cooking Instructions&#10;Example:&#10;Prepare all ingredients.&#10;Mix the flour and milk.&#10;Cook until golden brown."
+    required
+></textarea>
+
+            <button type="submit" class="save-button">
+                Save Recipe
+            </button>
+        </form>
+    </div>
+</div>
+
+        </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">🏠<span>Home</span></a>
+        <a href="#" class="nav-item" id="favoritesNav">♡<span>Favorites</span></a>
+        <a href="#" class="nav-item" id="myRecipesNav">📖<span>My Recipes</span></a>
+    </nav>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
