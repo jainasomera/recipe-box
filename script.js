@@ -378,7 +378,7 @@ document.getElementById("profileEmail").textContent = user.email;
 
         console.log("User is logged in:", user.email);
 
-        await Promise.all([
+       await Promise.all([
     loadUserRecipes(user),
     loadUserFavorites(user)
 ]);
@@ -949,6 +949,12 @@ document.getElementById("favoritesNav").addEventListener("click", event => {
     document.querySelector(".category.active")?.classList.remove("active");
     document.querySelector('[data-category="All"]').classList.add("active");
 
+    // Highlight Favorites button
+    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+        item.classList.remove("active");
+    });
+    document.getElementById("favoritesNav").classList.add("active");
+
     displayRecipes();
 });
 
@@ -957,7 +963,6 @@ document.getElementById("myRecipesNav").addEventListener("click", event => {
     event.preventDefault();
 
     showingFavorites = false;
-    showingMyRecipes = false;
     showingMyRecipes = true;
     selectedCategory = "All";
 
@@ -967,6 +972,13 @@ document.getElementById("myRecipesNav").addEventListener("click", event => {
     document.querySelector('[data-category="All"]').classList.add("active");
 
     searchInput.value = "";
+
+    // Highlight My Recipes button
+    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+        item.classList.remove("active");
+    });
+    document.getElementById("myRecipesNav").classList.add("active");
+
     displayRecipes();
 });
 
