@@ -525,8 +525,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 0.7;
-    transform: translateY(-2px);
+    line-height: 1;
     margin-top: 0;
     margin-bottom: 18px;
 }
