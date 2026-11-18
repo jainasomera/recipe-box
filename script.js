@@ -633,25 +633,31 @@ function displayRecipes() {
     const currentUser = auth.currentUser;
 
     const filtered = recipes.filter(recipe => {
-        const matchesSearch =
-            recipe.name.toLowerCase().includes(searchText);
+    const matchesSearch =
+        recipe.name.toLowerCase().includes(searchText);
 
-        const matchesCategory =
-            selectedCategory === "All" ||
-            recipe.category === selectedCategory;
+    const matchesCategory =
+        selectedCategory === "All" ||
+        recipe.category === selectedCategory;
 
-        const matchesFavorites =
-            !showingFavorites || favorites.includes(recipe.id);
+    const matchesFavorites =
+        !showingFavorites || favorites.includes(recipe.id);
 
-        const matchesMyRecipes =
-            !showingMyRecipes ||
-            (currentUser && recipe.userId === currentUser.uid);
+    const matchesMyRecipes =
+        !showingMyRecipes ||
+        (currentUser && recipe.userId === currentUser.uid);
 
-        return matchesSearch &&
-            matchesCategory &&
-            matchesFavorites &&
-            matchesMyRecipes;
-    });
+    const matchesHome =
+        showingFavorites ||
+        showingMyRecipes ||
+        recipe.isDefault === true;
+
+    return matchesSearch &&
+        matchesCategory &&
+        matchesFavorites &&
+        matchesMyRecipes &&
+        matchesHome;
+});
 
     recipeGrid.innerHTML = "";
     recipeCount.textContent = `${filtered.length} recipes`;
@@ -901,14 +907,22 @@ recipeForm.addEventListener("submit", async (event) => {
         modal.classList.remove("show");
 
         selectedCategory = "All";
-        showingFavorites = false;
-        searchInput.value = "";
+showingFavorites = false;
+showingMyRecipes = true;
+searchInput.value = "";
 
-        document.querySelector(".category.active")?.classList.remove("active");
-        document.querySelector('[data-category="All"]').classList.add("active");
+document.querySelector(".category.active")?.classList.remove("active");
+document.querySelector('[data-category="All"]').classList.add("active");
 
-        recipeHeading.textContent = "Popular Recipes";
-        displayRecipes();
+recipeHeading.textContent = "My Recipes";
+
+// Highlight My Recipes navigation
+document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+    item.classList.remove("active");
+});
+document.getElementById("myRecipesNav").classList.add("active");
+
+displayRecipes();
 
         alert("Recipe saved successfully!");
 
