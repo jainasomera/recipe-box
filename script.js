@@ -378,8 +378,12 @@ document.getElementById("profileEmail").textContent = user.email;
 
         console.log("User is logged in:", user.email);
 
-        await loadUserRecipes(user);
-        await loadUserFavorites(user);
+        await Promise.all([
+    loadUserRecipes(user),
+    loadUserFavorites(user)
+]);
+
+displayRecipes();
 
     } else {
     authPage.style.display = "flex";
