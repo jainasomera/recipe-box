@@ -764,3 +764,8 @@ input::-ms-reveal,
 input::-ms-clear {
     display: none;
 }
+
+html,
+body {
+    overscroll-behavior-y: none;
+}
