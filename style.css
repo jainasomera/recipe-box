@@ -156,6 +156,8 @@ h2 {
     width: 100%;
     height: 165px;
     object-fit: cover;
+    display: block;
+    background: #eaf0e7;
 }
 
 .recipe-info {
