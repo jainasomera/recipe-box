@@ -42,6 +42,52 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+// Preload all recipe images before showing the homepage
+async function preloadRecipeImages(recipeList) {
+    const imageUrls = [
+        ...new Set(
+            recipeList
+                .map(recipe => recipe.image)
+                .filter(url => url && url.trim() !== "")
+        )
+    ];
+
+    console.log("Preloading recipe images:", imageUrls.length);
+
+    await Promise.all(
+        imageUrls.map(url => {
+            return new Promise(resolve => {
+                const img = new Image();
+
+                img.onload = async () => {
+                    try {
+                        await img.decode();
+                    } catch (error) {
+                        // Image already loaded
+                    }
+                    resolve();
+                };
+
+                img.onerror = () => {
+                    console.warn("Image failed to load:", url);
+                    resolve();
+                };
+
+                img.src = url;
+
+                if (img.complete) {
+                    resolve();
+                }
+            });
+        })
+    );
+
+    console.log("All recipe images are ready!");
+}
+
+
+
 // Load recipes from Firestore
 async function loadUserRecipes(user) {
     try {
@@ -57,28 +103,30 @@ async function loadUserRecipes(user) {
             ...docSnap.data()
         }));
 
-        // Display default recipes and user's Firebase recipes
-       recipes = [
-    ...defaultRecipes.map(recipe => ({
-        ...recipe,
-        isDefault: true
-    })),
-    ...firestoreRecipes.map(recipe => ({
-        ...recipe,
-        isDefault: false
-    }))
-];
+        recipes = [
+            ...defaultRecipes.map(recipe => ({
+                ...recipe,
+                isDefault: true
+            })),
+            ...firestoreRecipes.map(recipe => ({
+                ...recipe,
+                isDefault: false
+            }))
+        ];
+
+        // Wait for all images to preload
+        await preloadRecipeImages(recipes);
 
         saveData();
-        displayRecipes();
 
-        console.log("Recipes loaded successfully!");
+        console.log("Recipes and images loaded successfully!");
 
     } catch (error) {
         console.error("Error loading recipes:", error);
         alert("Unable to load recipes from Firebase.");
     }
 }
+
 // Load user's favorites from Firestore
 async function loadUserFavorites(user) {
     if (!user || auth.currentUser?.uid !== user.uid) {
@@ -100,10 +148,7 @@ async function loadUserFavorites(user) {
             favorites = [];
         }
 
-        displayRecipes();
-
-        console.log("Favorites loaded successfully!");
-
+               console.log("Favorites loaded successfully!");
     } catch (error) {
         if (auth.currentUser?.uid !== user.uid) {
             return;
@@ -321,18 +366,16 @@ authForm.addEventListener("submit", async (event) => {
             authMessage.textContent =
                 "Registration successful! Please click Login.";
 
-        } else {
+       } else {
 
-            // Login existing account
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
+    // Login existing account
+    await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+    );
 
-            authMessage.textContent = "";
-            authForm.reset();
-        }
+}
 
     } catch (error) {
 
@@ -357,6 +400,7 @@ authForm.addEventListener("submit", async (event) => {
     }
 });
 
+
 // Check if user is logged in
 onAuthStateChanged(auth, async (user) => {
 
@@ -370,31 +414,41 @@ onAuthStateChanged(auth, async (user) => {
         const firstName = fullName.trim().split(" ")[0];
 
         document.getElementById("profileName").textContent = fullName;
-document.getElementById("profileEmail").textContent = user.email;
-
+        document.getElementById("profileEmail").textContent = user.email;
         document.getElementById("userName").textContent = firstName;
-
-        authPage.style.display = "none";
 
         console.log("User is logged in:", user.email);
 
-       await Promise.all([
-    loadUserRecipes(user),
-    loadUserFavorites(user)
-]);
+        // Keep the login page visible while loading recipes and images
+        authPage.style.display = "flex";
 
-displayRecipes();
+       
+
+        try {
+            await Promise.all([
+                loadUserRecipes(user),
+                loadUserFavorites(user)
+            ]);
+
+            // Show homepage only after loading is complete
+            displayRecipes();
+            authPage.style.display = "none";
+
+        } catch (error) {
+            console.error("Error preparing homepage:", error);
+
+            if (authMessage) {
+                authMessage.textContent = "Unable to load recipes. Please try again.";
+            }
+        }
 
     } else {
-    authPage.style.display = "flex";
+        authPage.style.display = "flex";
 
-    // Close profile dropdown after logout
-    document.getElementById("profileDropdown").hidden = true;
-
-    document.getElementById("profileName").textContent = "User";
-    document.getElementById("profileEmail").textContent = "";
-
-    document.getElementById("userName").textContent = "User";
+        document.getElementById("profileDropdown").hidden = true;
+        document.getElementById("profileName").textContent = "User";
+        document.getElementById("profileEmail").textContent = "";
+        document.getElementById("userName").textContent = "User";
 
         recipes = [...defaultRecipes];
         favorites = [];
@@ -414,6 +468,7 @@ displayRecipes();
     }
 
 });
+
 
 console.log("Firebase connected successfully!");
 const defaultRecipes = [
@@ -626,6 +681,31 @@ backToRecipes.addEventListener("click", () => {
     window.scrollTo(0, 0);
 });
 
+// Swipe right to go back from recipe details
+let touchStartX = 0;
+let touchStartY = 0;
+
+recipeDetailsPage.addEventListener("touchstart", (event) => {
+    touchStartX = event.changedTouches[0].screenX;
+    touchStartY = event.changedTouches[0].screenY;
+}, { passive: true });
+
+recipeDetailsPage.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0].screenX;
+    const touchEndY = event.changedTouches[0].screenY;
+
+    const swipeDistanceX = touchEndX - touchStartX;
+    const swipeDistanceY = Math.abs(touchEndY - touchStartY);
+
+    if (
+        !recipeDetailsPage.hidden &&
+        swipeDistanceX > 100 &&
+        swipeDistanceY < 75
+    ) {
+        backToRecipes.click();
+    }
+}, { passive: true });
+
 
 // Display recipes
 function displayRecipes() {
@@ -681,7 +761,7 @@ filtered.forEach(recipe => {
     class="recipe-image"
     src="${image}"
     alt="${recipe.name}"
-    loading="lazy"
+   loading="eager"
     decoding="async"
 >
             <div class="recipe-info">
