@@ -430,9 +430,14 @@ onAuthStateChanged(auth, async (user) => {
                 loadUserFavorites(user)
             ]);
 
-            // Show homepage only after loading is complete
-            displayRecipes();
-            authPage.style.display = "none";
+          // Display all recipe cards
+displayRecipes();
+
+// Wait until all visible homepage images are decoded
+await waitForDisplayedRecipeImages();
+
+// Show homepage only when everything is ready
+authPage.style.display = "none";
 
         } catch (error) {
             console.error("Error preparing homepage:", error);
@@ -592,6 +597,36 @@ let selectedCategory = "All";
 let showingFavorites = false;
 let showingMyRecipes = false;
 const recipeGrid = document.getElementById("recipeGrid");
+
+
+ // Wait until the actual homepage images are loaded and decoded
+async function waitForDisplayedRecipeImages() {
+    const images = Array.from(
+        recipeGrid.querySelectorAll(".recipe-image")
+    );
+
+    await Promise.all(
+        images.map(async (img) => {
+            if (!img.complete) {
+                await new Promise(resolve => {
+                    img.addEventListener("load", resolve, { once: true });
+                    img.addEventListener("error", resolve, { once: true });
+                });
+            }
+
+            if (img.naturalWidth > 0) {
+                try {
+                    await img.decode();
+                } catch (error) {
+                    console.warn("Image decoding issue:", img.src);
+                }
+            }
+        })
+    );
+
+    console.log("All homepage images are displayed and ready!");
+}
+
 const searchInput = document.getElementById("searchInput");
 const recipeCount = document.getElementById("recipeCount");
 const recipeHeading = document.getElementById("recipeHeading");
