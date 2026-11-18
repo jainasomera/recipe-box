@@ -665,7 +665,13 @@ function displayRecipes() {
             "https://placehold.co/600x400?text=Recipe";
 
         card.innerHTML = `
-            <img class="recipe-image" src="${image}" alt="${recipe.name}">
+            <img
+    class="recipe-image"
+    src="${image}"
+    alt="${recipe.name}"
+    loading="lazy"
+    decoding="async"
+>
             <div class="recipe-info">
                 <h3></h3>
                 <p></p>
