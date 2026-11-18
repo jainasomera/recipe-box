@@ -962,6 +962,37 @@ document.getElementById("myRecipesNav").addEventListener("click", event => {
     displayRecipes();
 });
 
+// Show Home / Popular Recipes
+document.getElementById("homeNav").addEventListener("click", event => {
+    event.preventDefault();
+
+    showingFavorites = false;
+    showingMyRecipes = false;
+    selectedCategory = "All";
+
+    searchInput.value = "";
+    recipeHeading.textContent = "Popular Recipes";
+
+    document.querySelector(".category.active")?.classList.remove("active");
+    document.querySelector('[data-category="All"]')?.classList.add("active");
+
+    // Return to the main recipes section
+    recipeDetailsPage.hidden = true;
+    document.querySelector(".welcome").hidden = false;
+    document.querySelector(".search-section").hidden = false;
+    document.querySelector(".categories").hidden = false;
+    document.querySelector(".section-heading").hidden = false;
+    recipeGrid.hidden = false;
+
+    // Highlight Home in the bottom navigation
+    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+        item.classList.remove("active");
+    });
+    document.getElementById("homeNav").classList.add("active");
+
+    displayRecipes();
+});
+
 // Initial display
 displayRecipes();
 
