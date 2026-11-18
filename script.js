@@ -160,6 +160,47 @@ const authMessage = document.getElementById("authMessage");
 const authFullName = document.getElementById("authFullName");
 const authPassword = document.getElementById("authPassword");
 const authConfirmPassword = document.getElementById("authConfirmPassword");
+const confirmPasswordWrapper = document.getElementById("confirmPasswordWrapper");
+
+
+
+// Show / Hide Password
+document.querySelectorAll(".toggle-password").forEach(button => {
+
+    const eyeOpen = `
+        <svg viewBox="0 0 24 24">
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>`;
+
+    const eyeClosed = `
+        <svg viewBox="0 0 24 24">
+            <path d="M3 3l18 18"/>
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+            <path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.2 3.9"/>
+            <path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.9-.5"/>
+        </svg>`;
+
+    // Display the normal eye icon initially
+    button.innerHTML = eyeOpen;
+
+    button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.target);
+
+        if (!input) return;
+
+        const isPassword = input.type === "password";
+
+        input.type = isPassword ? "text" : "password";
+
+        button.innerHTML = isPassword ? eyeClosed : eyeOpen;
+
+        button.setAttribute(
+            "aria-label",
+            isPassword ? "Hide password" : "Show password"
+        );
+    });
+});
 
 const logoutBtn = document.getElementById("logoutBtn");
 
@@ -207,9 +248,9 @@ authSwitch.addEventListener("click", () => {
         ? "Already have an account?"
         : "Don't have an account?";
 
-    // Show or hide registration fields
     authFullName.hidden = !isRegisterMode;
-    authConfirmPassword.hidden = !isRegisterMode;
+confirmPasswordWrapper.hidden = !isRegisterMode;
+authConfirmPassword.hidden = !isRegisterMode;
 
     // Make fields required only during registration
     authFullName.required = isRegisterMode;
