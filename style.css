@@ -769,3 +769,26 @@ html,
 body {
     overscroll-behavior-y: none;
 }
+
+/* Bottom Navigation Active Highlight */
+.bottom-nav .nav-item {
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.bottom-nav .nav-item.active {
+    color: #3B82F6;
+    font-weight: 600;
+}
+
+.bottom-nav .nav-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 3px;
+    background-color: #3B82F6;
+    border-radius: 10px;
+}
