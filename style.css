@@ -446,16 +446,41 @@ h2 {
 
 
 
-/* MOBILE RECIPE BUTTON FIX */
+/* RECIPE BUTTON LAYOUT */
 .recipe-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.main-actions {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+}
+
+.main-actions .view-button {
+    flex: 1;
+}
+
+.main-actions .favorite-button {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 24px;
+}
+
+.owner-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .edit-button,
 .delete-button {
+    flex: 1;
     padding: 8px 10px;
     border: none;
     border-radius: 8px;
@@ -472,35 +497,6 @@ h2 {
 .delete-button {
     background: #fce8e6;
     color: #c44f4f;
-}
-
-.favorite-button {
-    min-width: 32px;
-    min-height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 24px;
-}
-
-@media (max-width: 480px) {
-    .recipe-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr 36px;
-        gap: 7px;
-    }
-
-    .view-button {
-        grid-column: 1 / -1;
-        width: 100%;
-    }
-
-    .edit-button,
-    .delete-button {
-        width: 100%;
-        padding: 9px 5px;
-    }
 }
 
 
