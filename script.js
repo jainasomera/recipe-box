@@ -687,16 +687,21 @@ filtered.forEach(recipe => {
             <div class="recipe-info">
                 <h3></h3>
                 <p></p>
-                <div class="recipe-actions">
-                    <button class="view-button">View Recipe</button>
-                    <button class="edit-button">Edit</button>
-                    <button class="delete-button">Delete</button>
-                    <button class="favorite-button ${
-                        favorites.includes(recipe.id) ? "liked" : ""
-                    }">
-                        ${favorites.includes(recipe.id) ? "♥" : "♡"}
-                    </button>
-                </div>
+              <div class="recipe-actions">
+    <div class="main-actions">
+        <button class="view-button">View Recipe</button>
+        <button class="favorite-button ${
+            favorites.includes(recipe.id) ? "liked" : ""
+        }">
+            ${favorites.includes(recipe.id) ? "♥" : "♡"}
+        </button>
+    </div>
+
+    <div class="owner-actions">
+        <button class="edit-button">Edit</button>
+        <button class="delete-button">Delete</button>
+    </div>
+</div>
             </div>
         `;
 
@@ -906,7 +911,7 @@ recipeForm.addEventListener("submit", async (event) => {
         recipeForm.reset();
         modal.classList.remove("show");
 
-        selectedCategory = "All";
+     selectedCategory = "All";
 showingFavorites = false;
 showingMyRecipes = true;
 searchInput.value = "";
