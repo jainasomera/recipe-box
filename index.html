@@ -39,6 +39,7 @@
         required
     >
 
+   <div class="password-wrapper">
     <input
         type="password"
         id="authPassword"
@@ -47,6 +48,16 @@
         required
     >
 
+    <button
+        type="button"
+        class="toggle-password"
+        data-target="authPassword"
+        aria-label="Show password"
+    >
+    </button>
+</div>
+
+<div class="password-wrapper" id="confirmPasswordWrapper" hidden>
     <input
         type="password"
         id="authConfirmPassword"
@@ -54,6 +65,15 @@
         autocomplete="new-password"
         hidden
     >
+
+    <button
+        type="button"
+        class="toggle-password"
+        data-target="authConfirmPassword"
+        aria-label="Show confirm password"
+    >
+    </button>
+</div>
 
     <button type="submit" id="authButton">
         Login
