@@ -657,8 +657,10 @@ function displayRecipes() {
         return;
     }
 
-    filtered.forEach(recipe => {
-        const card = document.createElement("article");
+    const fragment = document.createDocumentFragment();
+
+filtered.forEach(recipe => {
+    const card = document.createElement("article");
         card.className = "recipe-card";
 
         const image = recipe.image ||
@@ -816,8 +818,10 @@ function displayRecipes() {
             toggleFavorite(recipe.id);
         });
 
-        recipeGrid.appendChild(card);
+        fragment.appendChild(card);
     });
+
+     recipeGrid.appendChild(fragment);
 }
 
 
