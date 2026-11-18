@@ -23,7 +23,7 @@ import {
     onAuthStateChanged,
     signOut,
    setPersistence,
-inMemoryPersistence,
+browserLocalPersistence,
 updateProfile
 } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 
@@ -146,7 +146,7 @@ async function saveUserFavorites(user = auth.currentUser) {
 const auth = getAuth(app);
 
 // Require login again whenever the app is reopened or refreshed
-await setPersistence(auth, inMemoryPersistence);
+await setPersistence(auth, browserLocalPersistence);
 
 let isRegisterMode = false;
 
