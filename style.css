@@ -788,3 +788,10 @@ body {
     background-color: #3B82F6;
     border-radius: 10px;
 }
+
+
+/* Enable horizontal swipe gesture on recipe details */
+#recipeDetailsPage {
+    touch-action: pan-y;
+    overscroll-behavior-x: contain;
+}
