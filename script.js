@@ -253,7 +253,9 @@ const logoutBtn = document.getElementById("logoutBtn");
 logoutBtn.addEventListener("click", async () => {
     try {
         await signOut(auth);
+
         console.log("User logged out successfully!");
+
     } catch (error) {
         console.error("Logout error:", error);
     }
@@ -448,6 +450,15 @@ authPage.style.display = "none";
         }
 
     } else {
+        // Clear login and registration fields
+authForm.reset();
+
+authEmail.value = "";
+authPassword.value = "";
+authConfirmPassword.value = "";
+authFullName.value = "";
+
+authMessage.textContent = "";
         authPage.style.display = "flex";
 
         document.getElementById("profileDropdown").hidden = true;
