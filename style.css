@@ -796,3 +796,14 @@ body {
     touch-action: pan-y;
     overscroll-behavior-x: contain;
 }
+
+/* MOVE RECIPE DETAILS PAGE HIGHER */
+.container:has(#recipeDetailsPage:not([hidden])) {
+    padding-top: 0;
+}
+
+@media (max-width: 480px) {
+    .container:has(#recipeDetailsPage:not([hidden])) {
+        padding-top: 0;
+    }
+}
