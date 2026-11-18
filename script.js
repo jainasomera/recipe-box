@@ -626,31 +626,6 @@ backToRecipes.addEventListener("click", () => {
     window.scrollTo(0, 0);
 });
 
-// Swipe right to go back from recipe details
-let touchStartX = 0;
-let touchStartY = 0;
-
-recipeDetailsPage.addEventListener("touchstart", (event) => {
-    touchStartX = event.changedTouches[0].screenX;
-    touchStartY = event.changedTouches[0].screenY;
-}, { passive: true });
-
-recipeDetailsPage.addEventListener("touchend", (event) => {
-    const touchEndX = event.changedTouches[0].screenX;
-    const touchEndY = event.changedTouches[0].screenY;
-
-    const swipeDistanceX = touchEndX - touchStartX;
-    const swipeDistanceY = Math.abs(touchEndY - touchStartY);
-
-    if (
-        !recipeDetailsPage.hidden &&
-        swipeDistanceX > 100 &&
-        swipeDistanceY < 75
-    ) {
-        backToRecipes.click();
-    }
-}, { passive: true });
-
 
 // Display recipes
 function displayRecipes() {
