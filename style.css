@@ -504,7 +504,7 @@ h2 {
 /* RECIPE DETAILS PAGE */
 
 .recipe-details-page {
-    padding: 25px 0;
+    padding: 5px 0;
 }
 
 .recipe-details-page[hidden] {
@@ -519,7 +519,8 @@ h2 {
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    margin-bottom: 25px;
+    margin-top: 0;
+    margin-bottom: 18px;
 }
 
 .recipe-details-content {
@@ -568,8 +569,8 @@ h2 {
 
 @media (max-width: 480px) {
     .recipe-details-page {
-        padding: 15px 0;
-    }
+    padding: 5px 0;
+}
 
     #detailsImage {
         height: 220px;
@@ -787,4 +788,11 @@ body {
     height: 3px;
     background-color: #3B82F6;
     border-radius: 10px;
+}
+
+
+/* Enable horizontal swipe gesture on recipe details */
+#recipeDetailsPage {
+    touch-action: pan-y;
+    overscroll-behavior-x: contain;
 }
