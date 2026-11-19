@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "recipe-box-v3";
+const CACHE_NAME = "recipe-box-v4";
 
 
 const APP_FILES = [
