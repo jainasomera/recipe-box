@@ -752,6 +752,9 @@ recipeDetailsPage.addEventListener("touchend", (event) => {
     }
 }, { passive: true });
 
+// Cache recipe cards for faster navigation
+const recipeCardCache = new Map();
+
 
 // Display recipes
 function displayRecipes() {
@@ -759,33 +762,32 @@ function displayRecipes() {
     const currentUser = auth.currentUser;
 
     const filtered = recipes.filter(recipe => {
-    const matchesSearch =
-        recipe.name.toLowerCase().includes(searchText);
+        const matchesSearch =
+            recipe.name.toLowerCase().includes(searchText);
 
-    const matchesCategory =
-        selectedCategory === "All" ||
-        recipe.category === selectedCategory;
+        const matchesCategory =
+            selectedCategory === "All" ||
+            recipe.category === selectedCategory;
 
-    const matchesFavorites =
-        !showingFavorites || favorites.includes(recipe.id);
+        const matchesFavorites =
+            !showingFavorites || favorites.includes(recipe.id);
 
-    const matchesMyRecipes =
-        !showingMyRecipes ||
-        (currentUser && recipe.userId === currentUser.uid);
+        const matchesMyRecipes =
+            !showingMyRecipes ||
+            (currentUser && recipe.userId === currentUser.uid);
 
-    const matchesHome =
-        showingFavorites ||
-        showingMyRecipes ||
-        recipe.isDefault === true;
+        const matchesHome =
+            showingFavorites ||
+            showingMyRecipes ||
+            recipe.isDefault === true;
 
-    return matchesSearch &&
-        matchesCategory &&
-        matchesFavorites &&
-        matchesMyRecipes &&
-        matchesHome;
-});
+        return matchesSearch &&
+            matchesCategory &&
+            matchesFavorites &&
+            matchesMyRecipes &&
+            matchesHome;
+    });
 
-    recipeGrid.innerHTML = "";
     recipeCount.textContent = `${filtered.length} recipes`;
 
     if (filtered.length === 0) {
@@ -795,174 +797,208 @@ function displayRecipes() {
 
     const fragment = document.createDocumentFragment();
 
-filtered.forEach(recipe => {
-    const card = document.createElement("article");
-        card.className = "recipe-card";
+    filtered.forEach(recipe => {
+        let card = recipeCardCache.get(recipe.id);
 
-        const image = recipe.image ||
-            "https://placehold.co/600x400?text=Recipe";
+        // Create card only if it is not yet cached
+        if (!card) {
+            card = document.createElement("article");
+            card.className = "recipe-card";
 
-        card.innerHTML = `
-            <img
-    class="recipe-image"
-    src="${image}"
-    alt="${recipe.name}"
-   loading="eager"
-    decoding="async"
->
-            <div class="recipe-info">
-                <h3></h3>
-                <p></p>
-              <div class="recipe-actions">
-    <div class="main-actions">
-        <button class="view-button">View Recipe</button>
-        <button class="favorite-button ${
-            favorites.includes(recipe.id) ? "liked" : ""
-        }">
-            ${favorites.includes(recipe.id) ? "♥" : "♡"}
-        </button>
-    </div>
+            const image = recipe.image ||
+                "https://placehold.co/600x400?text=Recipe";
 
-    <div class="owner-actions">
-        <button class="edit-button">Edit</button>
-        <button class="delete-button">Delete</button>
-    </div>
-</div>
-            </div>
-        `;
+            card.innerHTML = `
+                <img
+                    class="recipe-image"
+                    src="${image}"
+                    alt="${recipe.name}"
+                    loading="eager"
+                    decoding="async"
+                >
 
+                <div class="recipe-info">
+                    <h3></h3>
+                    <p></p>
+
+                    <div class="recipe-actions">
+                        <div class="main-actions">
+                            <button class="view-button">View Recipe</button>
+                            <button class="favorite-button">♡</button>
+                        </div>
+
+                        <div class="owner-actions">
+                            <button class="edit-button">Edit</button>
+                            <button class="delete-button">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // View Recipe
+            card.querySelector(".view-button").addEventListener("click", () => {
+                showRecipeDetails(recipe);
+            });
+
+            // Edit Recipe
+            card.querySelector(".edit-button").addEventListener("click", async () => {
+                if (!auth.currentUser ||
+                    recipe.userId !== auth.currentUser.uid) {
+                    alert("You can only edit your own recipes.");
+                    return;
+                }
+
+                const newName = prompt("Enter recipe name:", recipe.name);
+                if (newName === null || newName.trim() === "") return;
+
+                const newCategory = prompt(
+                    "Enter category (Breakfast, Lunch, Dinner, Dessert):",
+                    recipe.category
+                );
+                if (newCategory === null) return;
+
+                const newTime = prompt("Enter cooking time:", recipe.time);
+                if (newTime === null) return;
+
+                const newImage = prompt("Enter image URL:", recipe.image);
+                if (newImage === null) return;
+
+                const newIngredients = prompt(
+                    "Enter ingredients:", recipe.ingredients
+                );
+                if (newIngredients === null) return;
+
+                const newInstructions = prompt(
+                    "Enter instructions:", recipe.instructions
+                );
+                if (newInstructions === null) return;
+
+                const validCategories = [
+                    "Breakfast", "Lunch", "Dinner", "Dessert"
+                ];
+
+                if (!validCategories.includes(newCategory.trim())) {
+                    alert("Please enter a valid category.");
+                    return;
+                }
+
+                const updatedRecipe = {
+                    name: newName.trim(),
+                    category: newCategory.trim(),
+                    time: newTime.trim(),
+                    image: newImage.trim(),
+                    ingredients: newIngredients.trim(),
+                    instructions: newInstructions.trim()
+                };
+
+                try {
+                    await updateDoc(
+                        doc(db, "recipes", recipe.id),
+                        updatedRecipe
+                    );
+
+                    Object.assign(recipe, updatedRecipe);
+
+                    // Update cached card image and information
+                    const cachedCard = recipeCardCache.get(recipe.id);
+
+                    if (cachedCard) {
+                        cachedCard.querySelector(".recipe-image").src =
+                            recipe.image ||
+                            "https://placehold.co/600x400?text=Recipe";
+
+                        cachedCard.querySelector(".recipe-image").alt =
+                            recipe.name;
+
+                        cachedCard.querySelector("h3").textContent =
+                            recipe.name;
+
+                        cachedCard.querySelector(".recipe-info p").textContent =
+                            `${recipe.category} • ${recipe.time}`;
+                    }
+
+                    displayRecipes();
+
+                    alert("Recipe updated successfully!");
+
+                } catch (error) {
+                    console.error("Error updating recipe:", error);
+                    alert("Unable to update recipe. Please try again.");
+                }
+            });
+
+            // Delete Recipe
+            card.querySelector(".delete-button").addEventListener("click", async () => {
+                if (!auth.currentUser ||
+                    recipe.userId !== auth.currentUser.uid) {
+                    alert("You can only delete your own recipes.");
+                    return;
+                }
+
+                const confirmDelete = confirm(
+                    `Are you sure you want to delete ${recipe.name}?`
+                );
+
+                if (!confirmDelete) return;
+
+                try {
+                    await deleteDoc(doc(db, "recipes", recipe.id));
+
+                    recipes = recipes.filter(
+                        item => item.id !== recipe.id
+                    );
+
+                    favorites = favorites.filter(
+                        id => id !== recipe.id
+                    );
+
+                    recipeCardCache.delete(recipe.id);
+
+                    await saveUserFavorites();
+                    displayRecipes();
+
+                    alert("Recipe deleted successfully!");
+
+                } catch (error) {
+                    console.error("Error deleting recipe:", error);
+                    alert("Unable to delete recipe. Please try again.");
+                }
+            });
+
+            // Favorite
+            card.querySelector(".favorite-button").addEventListener("click", () => {
+                toggleFavorite(recipe.id);
+            });
+
+            // Save card in cache
+            recipeCardCache.set(recipe.id, card);
+        }
+
+        // Update card information
         card.querySelector("h3").textContent = recipe.name;
 
         card.querySelector(".recipe-info p").textContent =
             `${recipe.category} • ${recipe.time}`;
 
-        // Check recipe ownership
+        // Update favorite button
+        const favoriteButton = card.querySelector(".favorite-button");
+        const isFavorite = favorites.includes(recipe.id);
+
+        favoriteButton.classList.toggle("liked", isFavorite);
+        favoriteButton.textContent = isFavorite ? "♥" : "♡";
+
+        // Update owner buttons
         const isOwner =
             currentUser && recipe.userId === currentUser.uid;
 
-        if (!isOwner) {
-            card.querySelector(".edit-button").hidden = true;
-            card.querySelector(".delete-button").hidden = true;
-        }
-
-        // View Recipe
-        card.querySelector(".view-button").addEventListener("click", () => {
-            showRecipeDetails(recipe);
-        });
-
-        // Edit Recipe
-        card.querySelector(".edit-button").addEventListener("click", async () => {
-            if (!auth.currentUser ||
-                recipe.userId !== auth.currentUser.uid) {
-                alert("You can only edit your own recipes.");
-                return;
-            }
-
-            const newName = prompt("Enter recipe name:", recipe.name);
-            if (newName === null || newName.trim() === "") return;
-
-            const newCategory = prompt(
-                "Enter category (Breakfast, Lunch, Dinner, Dessert):",
-                recipe.category
-            );
-            if (newCategory === null) return;
-
-            const newTime = prompt("Enter cooking time:", recipe.time);
-            if (newTime === null) return;
-
-            const newImage = prompt("Enter image URL:", recipe.image);
-            if (newImage === null) return;
-
-            const newIngredients = prompt(
-                "Enter ingredients:", recipe.ingredients
-            );
-            if (newIngredients === null) return;
-
-            const newInstructions = prompt(
-                "Enter instructions:", recipe.instructions
-            );
-            if (newInstructions === null) return;
-
-            const validCategories = [
-                "Breakfast", "Lunch", "Dinner", "Dessert"
-            ];
-
-            if (!validCategories.includes(newCategory.trim())) {
-                alert("Please enter a valid category.");
-                return;
-            }
-
-            const updatedRecipe = {
-                name: newName.trim(),
-                category: newCategory.trim(),
-                time: newTime.trim(),
-                image: newImage.trim(),
-                ingredients: newIngredients.trim(),
-                instructions: newInstructions.trim()
-            };
-
-            try {
-                await updateDoc(
-                    doc(db, "recipes", recipe.id),
-                    updatedRecipe
-                );
-
-                Object.assign(recipe, updatedRecipe);
-                displayRecipes();
-
-                alert("Recipe updated successfully!");
-
-            } catch (error) {
-                console.error("Error updating recipe:", error);
-                alert("Unable to update recipe. Please try again.");
-            }
-        });
-
-        // Delete Recipe
-        card.querySelector(".delete-button").addEventListener("click", async () => {
-            if (!auth.currentUser ||
-                recipe.userId !== auth.currentUser.uid) {
-                alert("You can only delete your own recipes.");
-                return;
-            }
-
-            const confirmDelete = confirm(
-                `Are you sure you want to delete ${recipe.name}?`
-            );
-
-            if (!confirmDelete) return;
-
-            try {
-                await deleteDoc(doc(db, "recipes", recipe.id));
-
-                recipes = recipes.filter(
-                    item => item.id !== recipe.id
-                );
-
-                favorites = favorites.filter(
-                    id => id !== recipe.id
-                );
-
-                await saveUserFavorites();
-                displayRecipes();
-
-                alert("Recipe deleted successfully!");
-
-            } catch (error) {
-                console.error("Error deleting recipe:", error);
-                alert("Unable to delete recipe. Please try again.");
-            }
-        });
-
-        // Favorite
-        card.querySelector(".favorite-button").addEventListener("click", () => {
-            toggleFavorite(recipe.id);
-        });
+        card.querySelector(".edit-button").hidden = !isOwner;
+        card.querySelector(".delete-button").hidden = !isOwner;
 
         fragment.appendChild(card);
     });
 
-     recipeGrid.appendChild(fragment);
+    // Replace displayed cards with cached cards
+    recipeGrid.replaceChildren(fragment);
 }
 
 
