@@ -289,7 +289,7 @@ authSwitch.addEventListener("click", () => {
 
     authSubtitle.textContent = isRegisterMode
         ? "Create your Recipe Box account."
-        : "Welcome back! Please login.";
+        : "Please login.";
 
     authSwitchText.textContent = isRegisterMode
         ? "Already have an account?"
