@@ -13,7 +13,7 @@
 <body>
 
 
-<div id="authPage" class="auth-page">
+<div id="authPage" class="auth-page" style="display: none;">
     <div class="auth-box">
        <div class="auth-logo">
     <img src="logo.png" alt="Recipe Box Logo">
@@ -135,7 +135,7 @@
         <section class="welcome">
    
 
-    <h1>Welcome, <span id="userName">User</span>! 👋</h1>
+    <h1>Welcome, <span id="userName" style="visibility: hidden;">User</span>! 👋</h1>
 
     <h2>What would you like to cook today?</h2>
 
@@ -172,7 +172,13 @@
                 <span id="recipeCount">6 recipes</span>
             </div>
 
-            <div class="recipe-grid" id="recipeGrid"></div>
+            <div id="recipeLoading" class="recipe-loading">
+    <div class="loading-spinner"></div>
+    <h3>Loading recipes...</h3>
+    <p>Please wait while we prepare your recipes.</p>
+</div>
+
+<div class="recipe-grid" id="recipeGrid"></div>
 
             
 <section id="recipeDetailsPage" class="recipe-details-page" hidden>
