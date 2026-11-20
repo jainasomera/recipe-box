@@ -190,12 +190,26 @@ async function saveUserFavorites(user = auth.currentUser) {
 // Firebase Authentication
 const auth = getAuth(app);
 
-// Require login again whenever the app is reopened or refreshed
-await setPersistence(auth, browserLocalPersistence);
+
 
 let isRegisterMode = false;
 
 const authPage = document.getElementById("authPage");
+authPage.style.display = "none";
+const savedEmail = localStorage.getItem("lastUserEmail");
+const savedName = savedEmail
+    ? localStorage.getItem("userName_" + savedEmail)
+    : null;
+
+const userNameElement = document.getElementById("userName");
+
+if (savedName) {
+    userNameElement.textContent = savedName.trim().split(" ")[0];
+    userNameElement.style.visibility = "visible";
+}
+
+await setPersistence(auth, browserLocalPersistence);
+
 const authForm = document.getElementById("authForm");
 const authButton = document.getElementById("authButton");
 const authSwitch = document.getElementById("authSwitch");
@@ -412,34 +426,45 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     if (user) {
-        const fullName = user.displayName || user.email.split("@")[0];
-        const firstName = fullName.trim().split(" ")[0];
+      const emailKey = user.email.toLowerCase();
+const savedName = localStorage.getItem("userName_" + emailKey);
+const fullName = user.displayName || savedName || user.email.split("@")[0];
+const firstName = fullName.trim().split(" ")[0];
 
+localStorage.setItem("userName_" + emailKey, fullName);
+localStorage.setItem("lastUserEmail", emailKey);
         document.getElementById("profileName").textContent = fullName;
         document.getElementById("profileEmail").textContent = user.email;
-        document.getElementById("userName").textContent = firstName;
+        const userNameElement = document.getElementById("userName");
+
+userNameElement.textContent = firstName;
+userNameElement.style.visibility = "visible";
 
         console.log("User is logged in:", user.email);
 
-        // Keep the login page visible while loading recipes and images
-        authPage.style.display = "flex";
+        
 
        
 
         try {
-            await Promise.all([
-                loadUserRecipes(user),
-                loadUserFavorites(user)
-            ]);
+    const recipeLoading = document.getElementById("recipeLoading");
 
-          // Display all recipe cards
-displayRecipes();
+    recipeLoading.style.display = "flex";
+    recipeGrid.style.display = "none";
 
-// Wait until all visible homepage images are decoded
-await waitForDisplayedRecipeImages();
+    await Promise.all([
+        loadUserRecipes(user),
+        loadUserFavorites(user)
+    ]);
 
-// Show homepage only when everything is ready
-authPage.style.display = "none";
+    displayRecipes();
+
+    await waitForDisplayedRecipeImages();
+
+    recipeLoading.style.display = "none";
+    recipeGrid.style.display = "";
+
+    authPage.style.display = "none";
 
         } catch (error) {
             console.error("Error preparing homepage:", error);
@@ -460,6 +485,7 @@ authFullName.value = "";
 
 authMessage.textContent = "";
         authPage.style.display = "flex";
+        document.getElementById("userName").style.visibility = "hidden";
 
         document.getElementById("profileDropdown").hidden = true;
         document.getElementById("profileName").textContent = "User";
