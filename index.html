@@ -21,7 +21,7 @@
         <h1>Recipe Box</h1>
         <p id="authSubtitle">Please login.</p>
 
-        <form id="authForm">
+      <form id="authForm" autocomplete="off">
 
     <input
         type="text"
@@ -35,7 +35,7 @@
         type="email"
         id="authEmail"
         placeholder="Email Address"
-        autocomplete="email"
+        autocomplete="off"
         required
     >
 
@@ -44,7 +44,7 @@
         type="password"
         id="authPassword"
         placeholder="Password"
-        autocomplete="current-password"
+        autocomplete="new-password"
         required
     >
 
@@ -253,6 +253,99 @@
     <a href="#" class="nav-item" id="favoritesNav">♡<span>Favorites</span></a>
     <a href="#" class="nav-item" id="myRecipesNav">📖<span>My Recipes</span></a>
 </nav>
+
+
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="delete-confirm-modal" hidden>
+    <div class="delete-confirm-box">
+        <div class="delete-confirm-icon">!</div>
+
+        <h3>Delete Recipe?</h3>
+
+        <p id="deleteConfirmMessage">
+            Are you sure you want to delete this recipe?
+        </p>
+
+        <div class="delete-confirm-actions">
+            <button id="cancelDeleteBtn" type="button">
+                Cancel
+            </button>
+
+            <button id="confirmDeleteBtn" type="button">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Recipe Modal -->
+<div id="editRecipeModal" class="edit-recipe-modal" hidden>
+
+    <div class="edit-recipe-box">
+
+        <h3>Edit Recipe</h3>
+
+        <form id="editRecipeForm">
+
+            <input
+                type="text"
+                id="editRecipeName"
+                placeholder="Enter recipe name"
+                required
+            >
+
+            <select id="editRecipeCategory" required>
+                <option value="">Enter Category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Dessert">Dessert</option>
+            </select>
+
+            <input
+                type="text"
+                id="editRecipeTime"
+                placeholder="Enter cooking time"
+                required
+            >
+
+            <input
+                type="url"
+                id="editRecipeImage"
+                placeholder="Enter image URL"
+            >
+
+            <textarea
+                id="editRecipeIngredients"
+                placeholder="Enter ingredients"
+                required
+            ></textarea>
+
+            <textarea
+                id="editRecipeInstructions"
+                placeholder="Enter instructions"
+                required
+            ></textarea>
+
+            <div class="edit-recipe-actions">
+
+                <button type="button" id="cancelEditBtn">
+                    Cancel
+                </button>
+
+                <button type="submit" id="saveEditBtn">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
     <script type="module" src="script.js"></script>
 </body>
