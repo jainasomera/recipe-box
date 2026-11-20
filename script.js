@@ -1321,3 +1321,33 @@ if ("serviceWorker" in navigator) {
             });
     });
 }
+
+
+// DARK MODE / LIGHT MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// Load saved theme
+const savedTheme = localStorage.getItem("recipeBoxTheme");
+
+if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light Mode";
+} else {
+    document.body.classList.remove("dark-mode");
+    themeToggle.textContent = "🌙 Dark Mode";
+}
+
+// Toggle theme
+themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    const isDarkMode = document.body.classList.contains("dark-mode");
+
+    if (isDarkMode) {
+        themeToggle.textContent = "☀️ Light Mode";
+        localStorage.setItem("recipeBoxTheme", "dark");
+    } else {
+        themeToggle.textContent = "🌙 Dark Mode";
+        localStorage.setItem("recipeBoxTheme", "light");
+    }
+});
