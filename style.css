@@ -1050,3 +1050,190 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* Dark Mode / Light Mode Button */
+.theme-toggle {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.theme-toggle:hover {
+    background: rgba(138, 154, 123, 0.15);
+}
+
+
+/* ============================= */
+/* RECIPE BOX DARK MODE */
+/* ============================= */
+
+body.dark-mode {
+    background: #1c211d;
+    color: #edf1e9;
+}
+
+body.dark-mode .header,
+body.dark-mode .bottom-nav {
+    background: #252c26;
+    border-color: #394238;
+}
+
+body.dark-mode .logo {
+    color: #b7c9a8;
+}
+
+body.dark-mode .welcome h1,
+body.dark-mode .welcome h2,
+body.dark-mode h2,
+body.dark-mode .recipe-info h3 {
+    color: #edf1e9;
+}
+
+body.dark-mode .subtitle,
+body.dark-mode #recipeCount,
+body.dark-mode .recipe-info p {
+    color: #aab5a7;
+}
+
+body.dark-mode .search-section input,
+body.dark-mode .category,
+body.dark-mode .recipe-card,
+body.dark-mode .profile-dropdown,
+body.dark-mode .modal-content,
+body.dark-mode .details-section,
+body.dark-mode .delete-confirm-box,
+body.dark-mode .edit-recipe-box {
+    background: #29322b;
+    color: #edf1e9;
+    border-color: #414c40;
+}
+
+body.dark-mode .search-section input,
+body.dark-mode #recipeForm input,
+body.dark-mode #recipeForm select,
+body.dark-mode #recipeForm textarea,
+body.dark-mode #editRecipeForm input,
+body.dark-mode #editRecipeForm select,
+body.dark-mode #editRecipeForm textarea {
+    background: #202821;
+    color: #edf1e9;
+    border-color: #465344;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #9aa596;
+}
+
+body.dark-mode .category {
+    color: #c5d1bd;
+}
+
+body.dark-mode .category.active {
+    background: #718b68;
+    border-color: #718b68;
+    color: white;
+}
+
+body.dark-mode .view-button,
+body.dark-mode .edit-button,
+body.dark-mode .back-button {
+    background: #394b3b;
+    color: #d5e5ce;
+}
+
+body.dark-mode .profile-button {
+    background: #394b3b;
+    color: #d5e5ce;
+}
+
+body.dark-mode .profile-info strong,
+body.dark-mode .recipe-details-info h1,
+body.dark-mode .details-section h2 {
+    color: #d5e5ce;
+}
+
+body.dark-mode .profile-info small,
+body.dark-mode #detailsTime {
+    color: #aab5a7;
+}
+
+body.dark-mode .profile-divider {
+    background: #414c40;
+}
+
+body.dark-mode .profile-logout:hover {
+    background: #493333;
+}
+
+body.dark-mode .nav-item {
+    color: #aab5a7;
+}
+
+body.dark-mode .nav-item.active {
+    color: #8fae7d;
+}
+
+body.dark-mode .details-section {
+    background: #29322b;
+}
+
+body.dark-mode #detailsIngredients,
+body.dark-mode #detailsInstructions {
+    color: #d4ddd0;
+}
+
+body.dark-mode .delete-confirm-box h3,
+body.dark-mode .edit-recipe-box h3 {
+    color: #edf1e9;
+}
+
+body.dark-mode .delete-confirm-box p {
+    color: #bac4b5;
+}
+
+body.dark-mode #cancelDeleteBtn,
+body.dark-mode #cancelEditBtn {
+    background: #39443a;
+    color: #e1e8dc;
+}
+
+body.dark-mode .loading-spinner {
+    border-color: #39443a;
+    border-top-color: #8A9A7B;
+}
+
+body.dark-mode .recipe-loading h3 {
+    color: #d5e5ce;
+}
+
+body.dark-mode .recipe-loading p {
+    color: #aab5a7;
+}
+
+body.dark-mode .theme-toggle {
+    color: #edf1e9;
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: #39443a;
+}
+
+
+/* Improve Profile Icon Visibility in Dark Mode */
+body.dark-mode .profile-button {
+    background: #52664f;
+    color: #ffffff;
+    border: 1px solid #8A9A7B;
+    box-shadow: 0 0 0 2px rgba(138, 154, 123, 0.15);
+}
+
+body.dark-mode .profile-button:hover {
+    background: #687f61;
+}
