@@ -453,11 +453,34 @@ userNameElement.style.visibility = "visible";
     recipeGrid.style.display = "none";
 
     await Promise.all([
-        loadUserRecipes(user),
-        loadUserFavorites(user)
-    ]);
+    loadUserRecipes(user),
+    loadUserFavorites(user)
+]);
 
-    displayRecipes();
+// Prepare My Recipes cards in advance
+showingFavorites = false;
+showingMyRecipes = true;
+selectedCategory = "All";
+searchInput.value = "";
+displayRecipes();
+
+// Prepare Favorites cards in advance
+showingFavorites = true;
+showingMyRecipes = false;
+displayRecipes();
+
+// Display Home recipes
+showingFavorites = false;
+showingMyRecipes = false;
+selectedCategory = "All";
+
+document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+    item.classList.remove("active");
+});
+
+document.getElementById("homeNav").classList.add("active");
+
+displayRecipes();
 
     await waitForDisplayedRecipeImages();
 
@@ -806,6 +829,7 @@ recipeDetailsPage.addEventListener("touchend", (event) => {
 
 // Cache recipe cards for faster navigation
 const recipeCardCache = new Map();
+let isFirstNavigation = true;
 
 
 // Display recipes
@@ -964,7 +988,9 @@ card.querySelector(".delete-button").addEventListener("click", () => {
     });
 
     // Replace displayed cards with cached cards
-    recipeGrid.replaceChildren(fragment);
+recipeGrid.replaceChildren(fragment);
+
+isFirstNavigation = false;
 }
 
 
