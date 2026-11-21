@@ -715,6 +715,22 @@ const editRecipeInstructions = document.getElementById("editRecipeInstructions")
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const saveEditBtn = document.getElementById("saveEditBtn");
 
+// Success Message Modal
+const successModal = document.getElementById("successModal");
+const successMessage = document.getElementById("successMessage");
+const successOkBtn = document.getElementById("successOkBtn");
+
+// Show Success Message
+function showSuccessMessage(message) {
+    successMessage.textContent = message;
+    successModal.hidden = false;
+}
+
+// Close Success Message
+successOkBtn.addEventListener("click", () => {
+    successModal.hidden = true;
+});
+
 let recipeToEdit = null;
 
 
@@ -1010,25 +1026,26 @@ confirmDeleteBtn.addEventListener("click", async () => {
     confirmDeleteBtn.disabled = true;
 
     try {
-        await deleteDoc(doc(db, "recipes", recipe.id));
+    await deleteDoc(doc(db, "recipes", recipe.id));
 
-        recipes = recipes.filter(
-            item => item.id !== recipe.id
-        );
+    recipes = recipes.filter(
+        item => item.id !== recipe.id
+    );
 
-        favorites = favorites.filter(
-            id => id !== recipe.id
-        );
+    favorites = favorites.filter(
+        id => id !== recipe.id
+    );
 
-        recipeCardCache.delete(recipe.id);
+    recipeCardCache.delete(recipe.id);
 
-        await saveUserFavorites();
-        displayRecipes();
+    deleteConfirmModal.hidden = true;
+    recipeToDelete = null;
 
-        deleteConfirmModal.hidden = true;
-        recipeToDelete = null;
+    showSuccessMessage("Recipe deleted successfully");
 
-        alert("Recipe deleted successfully!");
+    displayRecipes();
+
+    saveUserFavorites();
 
     } catch (error) {
         console.error("Error deleting recipe:", error);
@@ -1070,34 +1087,33 @@ editRecipeForm.addEventListener("submit", async (event) => {
 
     saveEditBtn.disabled = true;
 
-    try {
-        await updateDoc(
-            doc(db, "recipes", recipe.id),
-            updatedRecipe
-        );
+   try {
+    await updateDoc(
+        doc(db, "recipes", recipe.id),
+        updatedRecipe
+    );
 
-        Object.assign(recipe, updatedRecipe);
+    Object.assign(recipe, updatedRecipe);
 
-        const cachedCard = recipeCardCache.get(recipe.id);
+    const cachedCard = recipeCardCache.get(recipe.id);
 
-        if (cachedCard) {
-            cachedCard.querySelector(".recipe-image").src =
-                recipe.image || "https://placehold.co/600x400?text=Recipe";
+    if (cachedCard) {
+        cachedCard.querySelector(".recipe-image").src =
+            recipe.image || "https://placehold.co/600x400?text=Recipe";
 
-            cachedCard.querySelector(".recipe-image").alt = recipe.name;
-            cachedCard.querySelector("h3").textContent = recipe.name;
-            cachedCard.querySelector(".recipe-info p").textContent =
-                `${recipe.category} • ${recipe.time}`;
-        }
+        cachedCard.querySelector(".recipe-image").alt = recipe.name;
+        cachedCard.querySelector("h3").textContent = recipe.name;
+        cachedCard.querySelector(".recipe-info p").textContent =
+            `${recipe.category} • ${recipe.time}`;
+    }
 
-        editRecipeModal.hidden = true;
-        editRecipeForm.reset();
-        recipeToEdit = null;
+    editRecipeModal.hidden = true;
+    editRecipeForm.reset();
+    recipeToEdit = null;
 
-        displayRecipes();
+    showSuccessMessage("Recipe updated successfully");
 
-        alert("Recipe updated successfully!");
-
+    displayRecipes();
     } catch (error) {
         console.error("Error updating recipe:", error);
         alert("Unable to update recipe. Please try again.");
@@ -1160,44 +1176,46 @@ recipeForm.addEventListener("submit", async (event) => {
     };
 
     try {
-        // Save recipe to Firestore
-        const docRef = await addDoc(
-            collection(db, "recipes"),
-            newRecipe
-        );
+    // Save recipe to Firestore
+    const docRef = await addDoc(
+        collection(db, "recipes"),
+        newRecipe
+    );
 
-        // Add the saved recipe to the current display
-        recipes.push({
-            id: docRef.id,
-            ...newRecipe
-        });
+    // Add the saved recipe to the current display
+    recipes.push({
+        id: docRef.id,
+        ...newRecipe
+    });
 
-        // Also save locally
-        saveData();
+    // Show success message immediately
+    showSuccessMessage("Recipe saved successfully");
 
-        recipeForm.reset();
-        modal.classList.remove("show");
+    // Also save locally
+    saveData();
 
-     selectedCategory = "All";
-showingFavorites = false;
-showingMyRecipes = true;
-searchInput.value = "";
+    recipeForm.reset();
+    modal.classList.remove("show");
 
-document.querySelector(".category.active")?.classList.remove("active");
-document.querySelector('[data-category="All"]').classList.add("active");
+    selectedCategory = "All";
+    showingFavorites = false;
+    showingMyRecipes = true;
+    searchInput.value = "";
 
-recipeHeading.textContent = "My Recipes";
+    document.querySelector(".category.active")?.classList.remove("active");
+    document.querySelector('[data-category="All"]').classList.add("active");
 
-// Highlight My Recipes navigation
-document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
-    item.classList.remove("active");
-});
-document.getElementById("myRecipesNav").classList.add("active");
+    recipeHeading.textContent = "My Recipes";
 
-displayRecipes();
+    // Highlight My Recipes navigation
+    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+        item.classList.remove("active");
+    });
 
-        alert("Recipe saved successfully!");
+    document.getElementById("myRecipesNav").classList.add("active");
 
+    displayRecipes();
+    
     } catch (error) {
         console.error("Error saving recipe:", error);
         alert("Unable to save recipe. Please try again.");
